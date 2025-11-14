@@ -16,10 +16,8 @@ async function fetchProduct(id: string): Promise<Product> {
   };
 }
 
-export async function generateMetadata({ params }: { params: Params }) {
-  const resolvedParams = await params;
-  const product = await fetchProduct(resolvedParams.id);
-
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  const product = await fetchProduct(params.id);
   return {
     title: product.name,
     description: product.description,
