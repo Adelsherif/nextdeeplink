@@ -1,9 +1,7 @@
 'use client';
 import React from 'react';
 
-interface Props {
-  id: string;
-}
+interface Props { id: string; }
 
 export default function WhatsAppShareButton({ id }: Props) {
   const pageUrl = `${window.location.origin}/product/${id}`;
