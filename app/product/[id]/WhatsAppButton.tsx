@@ -1,10 +1,20 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-interface Props { id: string; }
+interface Props {
+  id: string;
+}
 
 export default function WhatsAppShareButton({ id }: Props) {
-  const pageUrl = `${window.location.origin}/product/${id}`;
+  const [pageUrl, setPageUrl] = useState('');
+
+  useEffect(() => {
+    // هنا موجود window
+    setPageUrl(`${window.location.origin}/product/${id}`);
+  }, [id]);
+
+  if (!pageUrl) return null; // ما ن renderش قبل ما يكون موجود URL
+
   const shareUrl = `https://wa.me/?text=${encodeURIComponent(pageUrl)}`;
 
   return (
