@@ -1,10 +1,12 @@
 'use server';
-import WhatsAppShareButton from './WhatsAppButton';
+import WhatsAppShareButton from './WhatsAppShareButton';
+import FacebookShareButton from './FacebookShareButton';
+import TwitterShareButton from './TwitterShareButton';
 
 interface Params { id: string; }
 interface Product { id: number; name: string; description: string; image: string; }
 
-// هنا عرف الدالة fetchProduct
+// جلب بيانات المنتج
 async function fetchProduct(id: string): Promise<Product> {
   const res = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
   const user = await res.json();
@@ -16,8 +18,10 @@ async function fetchProduct(id: string): Promise<Product> {
   };
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const product = await fetchProduct(params.id);
+// OG لكل صفحة
+export async function generateMetadata({ params }: { params: Params }) {
+  const resolvedParams = await params;
+  const product = await fetchProduct(resolvedParams.id);
   return {
     title: product.name,
     description: product.description,
@@ -29,11 +33,13 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   };
 }
 
+// توليد كل المسارات الديناميكية
 export async function generateStaticParams() {
-  const ids = [1, 2, 3, 4, 5];
+  const ids = [1, 2, 3, 4, 5]; // ممكن تجيبهم من API
   return ids.map(id => ({ id: id.toString() }));
 }
 
+// صفحة المنتج
 export default async function ProductPage({ params }: { params: Params }) {
   const resolvedParams = await params;
   const product = await fetchProduct(resolvedParams.id);
@@ -44,7 +50,12 @@ export default async function ProductPage({ params }: { params: Params }) {
       <p className="mb-4">{product.description}</p>
       <img src={product.image} alt={product.name} width={300} height={300} className="rounded shadow mb-4" />
 
-      <WhatsAppShareButton id={product.id.toString()} />
+      {/* Client Components */}
+      <div className="flex gap-4">
+        <WhatsAppShareButton id={product.id.toString()} />
+        <FacebookShareButton id={product.id.toString()} />
+        <TwitterShareButton id={product.id.toString()} />
+      </div>
     </div>
   );
 }
